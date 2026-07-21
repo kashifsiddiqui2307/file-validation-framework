@@ -1,0 +1,40 @@
+{
+  "files": [
+    {
+      "fileName": "BMOTOFNZ_20230101120000.zip",
+      "delimiter": "|",
+      "hasHeader": true,
+      "fileType": "CSV",
+      "expectedHeaders": [
+        "ID",
+        "Name",
+        "Amount",
+        "Date"
+      ],
+      "notNullColumns": [
+        "ID",
+        "Name"
+      ],
+      "dateFormat": "yyyy-MM-dd",
+      "skipValidations": []
+    },
+    {
+      "fileName": "sample_data_20230202143000.csv",
+      "delimiter": ",",
+      "hasHeader": true,
+      "fileType": "CSV",
+      "expectedHeaders": [
+        "ID",
+        "Name",
+        "Email",
+        "Status"
+      ],
+      "notNullColumns": [
+        "ID",
+        "Email"
+      ],
+      "dateFormat": "yyyy-MM-dd",
+      "skipValidations": []
+    }
+  ]
+}
