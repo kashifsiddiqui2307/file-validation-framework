@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-current.dtd">
+<suite name="File Validation Framework Test Suite" parallel="false" verbose="2">
+    <test name="File Validation Tests">
+        <classes>
+            <class name="com.filevalidation.tests.FileValidationTest"/>
+        </classes>
+    </test>
+</suite>

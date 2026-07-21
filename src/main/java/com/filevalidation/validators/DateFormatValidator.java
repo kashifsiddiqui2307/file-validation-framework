@@ -10,20 +10,19 @@ import org.apache.logging.log4j.Logger;
 import java.util.*;
 
 /**
- * Validator for date format validation
- * Validates YYYYMMDDHHMMSS format in ZIP file names
+ * Validator for date format validation in filenames
  */
 public class DateFormatValidator implements FileValidator {
     private static final Logger logger = LogManager.getLogger(DateFormatValidator.class);
+    private static final String DATE_PATTERN = "YYYYMMDDHHMMSS";
 
     @Override
     public ValidationResult validate(FileValidationContext context) {
         long startTime = System.currentTimeMillis();
-        String fileName = context.getFileName();
-        logger.info("Starting date format validation for file: {}", fileName);
+        logger.info("Starting date format validation for file: {}", context.getFileName());
 
         ValidationResult result = ValidationResult.builder()
-                .fileName(fileName)
+                .fileName(context.getFileName())
                 .validationType("Date Format Validation")
                 .passed(true)
                 .details(new HashMap<>())
@@ -31,26 +30,25 @@ public class DateFormatValidator implements FileValidator {
                 .build();
 
         try {
-            // Extract date from file name
-            String dateString = DateUtil.extractDateFromFileName(fileName);
+            String dateString = DateUtil.extractDateFromFileName(context.getFileName());
             if (dateString == null) {
+                logger.warn("Could not extract date from filename: {}", context.getFileName());
+                result.setErrorMessage("Could not extract date from filename");
                 result.setPassed(false);
-                result.setErrorMessage("Unable to extract date from file name");
-                result.getFailureDetails().add(String.format("File: %s - Cannot extract YYYYMMDDHHMMSS format", fileName));
-                logger.warn("Unable to extract date from file name: {}", fileName);
+                result.getFailureDetails().add("Filename does not contain YYYYMMDDHHMMSS format");
                 result.setExecutionTimeMs(System.currentTimeMillis() - startTime);
                 return result;
             }
 
-            // Validate date format
-            boolean isValid = DateUtil.validateDateFormat(dateString);
-            if (!isValid) {
+            if (!DateUtil.validateDateFormat(dateString)) {
                 result.setPassed(false);
-                result.setErrorMessage(String.format("Invalid date format: %s", dateString));
-                result.getFailureDetails().add(String.format("File: %s - Date: %s - Invalid format", fileName, dateString));
-                logger.warn("Invalid date format in file: {}", fileName);
+                result.setErrorMessage("Invalid date format in filename: " + dateString);
+                result.getFailureDetails().add("Expected format: " + DATE_PATTERN);
+                result.getFailureDetails().add("Found: " + dateString);
+                logger.warn("Date format validation failed for: {}", dateString);
             } else {
-                logger.info("Date format validation passed for file: {} - Date: {}", fileName, dateString);
+                result.getDetails().put("extractedDate", dateString);
+                logger.info("Date format validation passed for: {}", dateString);
             }
 
         } catch (Exception e) {
@@ -71,6 +69,6 @@ public class DateFormatValidator implements FileValidator {
 
     @Override
     public boolean supports(String fileType) {
-        return "ZIP".equalsIgnoreCase(fileType);
+        return true; // All file types can have date formats
     }
 }
